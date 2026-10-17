@@ -5,6 +5,7 @@
 **Scan any project folder. Get a plain-language summary and a visual map of your codebase.**
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Latest Release](https://img.shields.io/github/v/release/Azzam0707-crypto/Vibemap)](https://github.com/Azzam0707-crypto/Vibemap/releases/latest)
 [![Tests](https://img.shields.io/badge/tests-127%20passing-brightgreen.svg)](#testing)
 [![Electron](https://img.shields.io/badge/built%20with-Electron-47848F.svg)](https://www.electronjs.org/)
 
@@ -25,9 +26,9 @@ No vendor lock-in: bring your own AI provider (endpoint + API key), and VibeMap 
 
 ## Table of Contents
 
-- [Download](#download)
 - [Features](#features)
-- [Installation](#installation)
+- [Download](#download)
+- [Build from Source](#build-from-source)
 - [Usage](#usage)
 - [Configuration](#configuration)
 - [Architecture](#architecture)
@@ -35,15 +36,6 @@ No vendor lock-in: bring your own AI provider (endpoint + API key), and VibeMap 
 - [Contributing](#contributing)
 - [Built With](#built-with)
 - [License](#license)
-
-## Download
-
-Grab the latest Windows build from [Releases](https://github.com/Azzam0707-crypto/Vibemap/releases):
-
-- **VibeMap Setup x.x.x.exe** — installer (recommended)
-- **VibeMap x.x.x.exe** — portable, no install needed
-
-Or build from source below.
 
 ## Features
 
@@ -56,7 +48,16 @@ Or build from source below.
 | Scan history | Revisit previous analyses without re-scanning |
 | Secure key storage | API keys encrypted at rest via OS-level secure storage, where available |
 
-## Installation
+## Download
+
+Grab the latest Windows build from [Releases](https://github.com/Azzam0707-crypto/Vibemap/releases/latest):
+
+- **VibeMap Setup — Windows installer** (recommended)
+- **VibeMap — portable**, no install needed
+
+Prefer building it yourself? See [Build from Source](#build-from-source).
+
+## Build from Source
 
 ```bash
 git clone https://github.com/Azzam0707-crypto/Vibemap.git
