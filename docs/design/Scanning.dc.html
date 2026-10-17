@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>VibeMap - Scanning</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+  body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#faf9fd;color:#1a1b1e}
+  *{box-sizing:border-box}
+  @keyframes vm-spin{to{transform:rotate(360deg)}}
+  .vm-spinner{animation:vm-spin 1s linear infinite}
+</style>
+</helmet>
+
+<div style="min-height:100vh;width:100%;display:flex;flex-direction:column">
+
+  <header style="display:flex;align-items:center;gap:10px;padding:20px 32px;border-bottom:1px solid #efedf1;background:#ffffff">
+    <div style="width:28px;height:28px;border-radius:8px;background:#2e5ce6"></div>
+    <span style="font-weight:700;font-size:18px">VibeMap</span>
+  </header>
+
+  <main style="flex:1;display:flex;align-items:center;justify-content:center;padding:32px">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:24px;max-width:420px;text-align:center">
+
+      <div class="vm-spinner" style="width:40px;height:40px;border-radius:999px;border:3px solid #dce1ff;border-top-color:#2e5ce6"></div>
+
+      <div>
+        <h1 style="margin:0 0 6px;font-size:18px;font-weight:700">{{stage}}</h1>
+        <p style="margin:0;font-size:13px;color:#434655">This usually takes under 20 seconds.</p>
+      </div>
+
+      <div style="width:100%;height:6px;border-radius:999px;background:#efedf1;overflow:hidden">
+        <div style="width:{{percent}}%;height:100%;background:#2e5ce6;border-radius:999px"></div>
+      </div>
+
+      <span style="font-size:12px;color:#747686">{{fileCount}} files looked at so far</span>
+      <a href="Main.dc.html" style="font-size:12px;color:#747686;text-decoration:underline">Skip to dashboard (preview)</a>
+    </div>
+  </main>
+
+</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script data-props='{
+  "stage":{"editor":"text","default":"Reading your project..."},
+  "percent":{"editor":"range","default":62,"min":0,"max":100},
+  "fileCount":{"editor":"int","default":148}
+}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      stage: this.props.stage ?? 'Reading your project...',
+      percent: this.props.percent ?? 62,
+      fileCount: this.props.fileCount ?? 148
+    };
+  }
+}
+</script>
+</body>
+</html>

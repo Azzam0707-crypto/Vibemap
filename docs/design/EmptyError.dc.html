@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>VibeMap - Empty and Error states</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+  body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#faf9fd;color:#1a1b1e}
+  *{box-sizing:border-box}
+  .vm-btn{border:none;cursor:pointer;font-family:inherit}
+</style>
+</helmet>
+
+<div style="min-height:100vh;width:100%;display:flex;flex-direction:column">
+
+  <header style="display:flex;align-items:center;gap:10px;padding:20px 32px;border-bottom:1px solid #efedf1;background:#ffffff">
+    <div style="width:28px;height:28px;border-radius:8px;background:#2e5ce6"></div>
+    <span style="font-weight:700;font-size:18px">VibeMap</span>
+  </header>
+
+  <main style="flex:1;display:flex;flex-wrap:wrap;gap:24px;padding:32px;justify-content:center;align-content:flex-start">
+
+    <sc-for list="{{states}}" as="s" hint-placeholder-count="3">
+      <div style="flex:1 1 320px;max-width:360px;background:#ffffff;border:1px solid #efedf1;border-radius:12px;padding:28px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center">
+        <div style="width:48px;height:48px;border-radius:12px;background:{{s.tint}};display:flex;align-items:center;justify-content:center;font-size:20px;color:{{s.iconColor}}">{{s.icon}}</div>
+        <span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#747686">{{s.kicker}}</span>
+        <h2 style="margin:0;font-size:16px;font-weight:700">{{s.title}}</h2>
+        <p style="margin:0;font-size:13px;color:#434655;line-height:20px">{{s.desc}}</p>
+        <button class="vm-btn" style="margin-top:4px;padding:10px 20px;border-radius:8px;background:#2e5ce6;color:#ffffff;font-size:13px;font-weight:600">{{s.action}}</button>
+      </div>
+    </sc-for>
+
+  </main>
+
+</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script data-props='{"states":{"editor":null}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const defaultStates = [
+      { kicker: 'Empty folder', icon: '!', tint: '#efedf1', iconColor: '#5a5e68', title: 'This folder looks empty', desc: 'Pick a folder that has your project files in it.', action: 'Choose another folder' },
+      { kicker: 'Too large', icon: '!', tint: '#dfe2ee', iconColor: '#5a5e68', title: 'This project is pretty big', desc: 'VibeMap is still scanning, just taking a bit longer than usual.', action: 'Keep waiting' },
+      { kicker: 'AI not responding', icon: '×', tint: '#f6dede', iconColor: '#b3261e', title: "Couldn't reach the AI", desc: 'Check your API key or endpoint in AI Settings, then try again.', action: 'Open AI Settings' }
+    ];
+    return { states: this.props.states ?? defaultStates };
+  }
+}
+</script>
+</body>
+</html>

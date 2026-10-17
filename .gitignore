@@ -1,0 +1,14 @@
+node_modules/
+release/
+dist/
+build/
+out/
+coverage/
+test-results/
+playwright-report/
+*.log
+.env
+.env.*
+.DS_Store
+Thumbs.db
+.last-run.json

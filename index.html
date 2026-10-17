@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src *;">
+<title>VibeMap</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+  body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#faf9fd;color:#1a1b1e}
+  *{box-sizing:border-box}
+  .jtk-connector{z-index:0}
+  .map-file{z-index:1}
+  #mapTip{z-index:50}
+  @keyframes vm-spin{to{transform:rotate(360deg)}}
+  .vm-spinner{animation:vm-spin 1s linear infinite}
+</style>
+</head>
+<body>
+<div style="min-height:100vh;width:100%;display:flex;flex-direction:column">
+  <header style="display:flex;align-items:center;gap:10px;padding:20px 32px;border-bottom:1px solid #efedf1;background:#ffffff">
+    <div style="width:28px;height:28px;border-radius:8px;background:#2e5ce6"></div>
+    <span style="font-weight:700;font-size:18px">VibeMap</span>
+    <span style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      <button id="historyBtn" title="Scan history" style="width:34px;height:34px;border:none;border-radius:9px;background:#2e5ce6;color:#ffffff;display:flex;align-items:center;justify-content:center;cursor:pointer"><i data-lucide="history" style="width:18px;height:18px"></i></button>
+      <button id="settingsLink" title="AI Settings" style="width:34px;height:34px;border:none;border-radius:9px;background:#2e5ce6;color:#ffffff;display:flex;align-items:center;justify-content:center;cursor:pointer"><i data-lucide="settings" style="width:18px;height:18px"></i></button>
+    </span>
+  </header>
+
+  <div id="pickScreen" style="flex:1;display:flex;align-items:center;justify-content:center;padding:32px">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:20px;max-width:440px;text-align:center">
+      <div style="width:64px;height:64px;border-radius:16px;background:#dce1ff;display:flex;align-items:center;justify-content:center">
+        <div style="width:28px;height:22px;border:2px solid #2e5ce6;border-radius:4px;position:relative">
+          <div style="position:absolute;top:-6px;left:2px;width:12px;height:6px;background:#dce1ff;border:2px solid #2e5ce6;border-bottom:none;border-radius:3px 3px 0 0"></div>
+        </div>
+      </div>
+      <h1 style="margin:0;font-size:22px;font-weight:700">Which project do you want to see?</h1>
+      <p style="margin:0;font-size:14px;color:#434655;line-height:21px">Pick your project folder, and VibeMap will read through it and explain what's inside in plain language.</p>
+      <button id="pickBtn" style="margin-top:8px;padding:12px 28px;border:none;border-radius:10px;background:#2e5ce6;color:#ffffff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Pick a project folder</button>
+      <span id="pickHint" style="display:none;font-size:13px;color:#434655">Set up your AI first — VibeMap needs it to explain your project.</span>
+      <a id="pickSettingsLink" href="#" style="font-size:13px;color:#747686;text-decoration:none;border-bottom:1px solid #d8dbe4;cursor:pointer">Set up your AI</a>
+      <span id="pickedPath" style="font-size:12px;color:#747686;word-break:break-all"></span>
+    </div>
+  </div>
+
+  <div id="scanScreen" style="flex:1;display:none;align-items:center;justify-content:center;padding:32px">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:24px;max-width:420px;text-align:center;width:100%">
+      <div class="vm-spinner" style="width:40px;height:40px;border-radius:999px;border:3px solid #dce1ff;border-top-color:#2e5ce6"></div>
+      <div>
+        <h1 id="scanStage" style="margin:0 0 6px;font-size:18px;font-weight:700">Reading your project...</h1>
+        <p style="margin:0;font-size:13px;color:#434655">This usually takes under 20 seconds.</p>
+      </div>
+      <div style="width:100%;height:6px;border-radius:999px;background:#efedf1;overflow:hidden">
+        <div id="scanBar" style="width:10%;height:100%;background:#2e5ce6;border-radius:999px"></div>
+      </div>
+      <span id="scanCount" style="font-size:12px;color:#747686">0 files looked at so far</span>
+    </div>
+  </div>
+
+  <div id="dashScreen" style="display:none;flex:1;flex-direction:column;min-width:0">
+    <main style="flex:999 1 900px;display:flex;flex-wrap:wrap;gap:24px;padding:32px;min-width:0">
+      <section style="flex:1 1 420px;min-width:320px;display:flex;flex-direction:column;gap:20px">
+        <div style="background:#ffffff;border:1px solid #efedf1;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:12px">
+          <span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#434655">Quick recap</span>
+          <p id="recapText" style="margin:0;font-size:18px;font-weight:600;line-height:26px"></p>
+          <div id="statRow" style="display:flex;gap:16px;margin-top:4px"></div>
+        </div>
+        <div style="background:#ffffff;border:1px solid #efedf1;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <h2 style="margin:0;font-size:16px;font-weight:600">Changes by area</h2>
+            <span id="changeCount" style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px;background:#efedf1;color:#434655"></span>
+          </div>
+          <div id="changeList" style="display:flex;flex-direction:column;gap:2px"></div>
+        </div>
+      </section>
+      <section style="flex:1 1 560px;min-width:320px;background:#ffffff;border:1px solid #efedf1;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <h2 style="margin:0;font-size:16px;font-weight:600">Project map</h2>
+          <div style="display:flex;align-items:center;gap:6px">
+            <button id="zoomOut" style="width:26px;height:26px;border:1px solid #eaeae7;border-radius:6px;background:#ffffff;color:#434655;font-size:14px;cursor:pointer;font-family:inherit">−</button>
+            <button id="zoomLabel" style="border:none;background:none;font-size:11px;font-weight:600;color:#434655;min-width:44px;cursor:pointer;font-family:inherit">100%</button>
+            <button id="zoomIn" style="width:26px;height:26px;border:1px solid #eaeae7;border-radius:6px;background:#ffffff;color:#434655;font-size:14px;cursor:pointer;font-family:inherit">+</button>
+            <button id="zoomFit" style="height:26px;padding:0 8px;border:1px solid #eaeae7;border-radius:6px;background:#ffffff;color:#434655;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">Fit</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px">
+          <span id="legendDirect" style="font-size:11px;color:#747686;display:flex;align-items:center;gap:5px"><span style="width:12px;height:2px;background:#9aa0ff;display:inline-block"></span>imports directly</span>
+          <span id="legendTransitive" style="font-size:11px;color:#747686;display:flex;align-items:center;gap:5px"><span style="width:12px;height:0px;border-top:2px dashed #b7bbe6;display:inline-block"></span>related indirectly</span>
+        </div>
+        <div id="mapArea" style="position:relative;flex:1;min-height:420px;max-height:560px;border-radius:10px;background-image:radial-gradient(#e9e7eb 1px,transparent 1px);background-size:16px 16px;background-color:#fcfcfd;overflow:auto">
+          <div id="mapCanvas" style="position:relative;min-width:100%;min-height:100%;transform-origin:0 0"></div>
+          <div id="mapTip" style="display:none;position:absolute;z-index:50;max-width:260px;padding:8px 12px;background:#1a1b1e;color:#ffffff;font-size:12px;line-height:17px;border-radius:8px;pointer-events:none"></div>
+        </div>
+        <button id="backBtn" style="align-self:flex-start;padding:8px 16px;border:1px solid #d8dbe4;border-radius:8px;background:#ffffff;color:#434655;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Choose a different project</button>
+      </section>
+    </main>
+    <footer style="padding:14px 32px 28px;text-align:center">
+      <span style="font-size:12px;color:#747686">This is an automatic summary and might miss some details.</span>
+    </footer>
+  </div>
+
+  <div id="historyScreen" style="flex:1;display:none;justify-content:center;padding:48px 32px">
+    <div style="width:100%;max-width:560px;display:flex;flex-direction:column;gap:16px">
+      <div>
+        <h1 style="margin:0 0 4px;font-size:20px;font-weight:700">Recently scanned</h1>
+        <p style="margin:0;font-size:13px;color:#434655;line-height:20px">Open a past result instantly, or rescan it fresh.</p>
+      </div>
+      <div id="historyEmpty" style="display:none;background:#ffffff;border:1px solid #eaeae7;border-radius:12px;padding:28px;text-align:center;font-size:14px;color:#434655">No scans yet. Pick a folder to get started.</div>
+      <div id="historyList" style="display:flex;flex-direction:column;gap:12px"></div>
+      <a id="historyBack" href="#" style="text-align:center;font-size:13px;color:#747686;text-decoration:none;cursor:pointer">Back to Pick Folder</a>
+    </div>
+  </div>
+
+  <div id="settingsScreen" style="flex:1;display:none;justify-content:center;padding:48px 32px">
+    <div style="width:100%;max-width:480px;display:flex;flex-direction:column;gap:20px">
+      <div>
+        <h1 style="margin:0 0 4px;font-size:20px;font-weight:700">Which AI do you want to use?</h1>
+        <p style="margin:0;font-size:13px;color:#434655;line-height:20px">This is what reads your project and writes the summaries.</p>
+      </div>
+      <label id="cloudCard" style="display:flex;gap:14px;align-items:flex-start;padding:16px;border-radius:12px;border:1.5px solid #2e5ce6;background:#fbfcff;cursor:pointer">
+        <input type="radio" name="provider" value="cloud" checked style="margin-top:4px">
+        <span style="display:flex;flex-direction:column;gap:3px">
+          <span style="font-size:14px;font-weight:600">Cloud API (your choice)</span>
+          <span style="font-size:13px;color:#434655;line-height:19px">Claude, OpenAI, or another provider, as long as it fits the project.</span>
+        </span>
+      </label>
+      <label id="ollamaCard" style="display:flex;gap:14px;align-items:flex-start;padding:16px;border-radius:12px;border:1.5px solid #efedf1;background:#ffffff;cursor:pointer">
+        <input type="radio" name="provider" value="ollama" style="margin-top:4px">
+        <span style="display:flex;flex-direction:column;gap:3px">
+          <span style="font-size:14px;font-weight:600">Ollama (local)</span>
+          <span style="font-size:13px;color:#434655;line-height:19px">Runs on your own machine, free, needs installing first.</span>
+        </span>
+      </label>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:13px;font-weight:500">Provider</span>
+        <select id="providerSelect" style="padding:11px 14px;border-radius:8px;border:1px solid #d8dbe4;font-size:14px;outline:none;font-family:inherit">
+          <option value="openai">OpenAI</option>
+          <option value="anthropic">Anthropic</option>
+          <option value="gemini">Gemini</option>
+          <option value="ollama">Ollama (local)</option>
+          <option value="custom">Custom endpoint</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:13px;font-weight:500">Provider endpoint</span>
+        <input id="endpointInput" type="text" placeholder="api.anthropic.com, api.openai.com, or another compatible provider" style="padding:11px 14px;border-radius:8px;border:1px solid #d8dbe4;font-size:14px;outline:none;font-family:inherit">
+        <span style="font-size:12px;color:#747686">Use whichever provider you prefer, as long as it fits the project's format.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:13px;font-weight:500">Model name</span>
+        <div style="display:flex;gap:8px">
+          <input id="modelInput" type="text" placeholder="gpt-4o-mini, claude-sonnet-4, llama3, or your model name" style="flex:1;min-width:0;padding:11px 14px;border-radius:8px;border:1px solid #d8dbe4;font-size:14px;outline:none;font-family:inherit">
+          <button id="fetchModelsBtn" type="button" style="padding:11px 14px;border:1px solid #d8dbe4;border-radius:8px;background:#ffffff;color:#2e5ce6;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;flex-shrink:0">Fetch models</button>
+        </div>
+        <select id="modelSelect" style="display:none;padding:11px 14px;border-radius:8px;border:1px solid #d8dbe4;font-size:14px;outline:none;font-family:inherit"></select>
+        <span id="modelsNotice" style="display:none;font-size:12px;color:#b3261e">Couldn't fetch models — type one manually.</span>
+        <span style="font-size:12px;color:#747686">Which model to ask for summaries.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:13px;font-weight:500">API key</span>
+        <div style="display:flex;gap:8px">
+          <input id="apiKeyInput" type="password" placeholder="sk-..." style="flex:1;min-width:0;padding:11px 14px;border-radius:8px;border:1px solid #d8dbe4;font-size:14px;outline:none;font-family:inherit">
+          <button id="apiKeyToggle" type="button" style="padding:11px 14px;border:1px solid #d8dbe4;border-radius:8px;background:#ffffff;color:#434655;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;flex-shrink:0">Show</button>
+        </div>
+        <span style="font-size:12px;color:#747686">Stored locally on your computer only.</span>
+      </div>
+      <button id="saveProviderBtn" style="margin-top:4px;padding:12px;border:none;border-radius:10px;background:#2e5ce6;color:#ffffff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Save</button>
+      <span id="settingsSaved" style="display:none;font-size:13px;color:#2e5ce6;text-align:center">Saved.</span>
+      <a id="settingsSkip" href="#" style="text-align:center;font-size:13px;color:#747686;text-decoration:none;cursor:pointer">Back to Pick Folder</a>
+    </div>
+  </div>
+
+  <div id="errorScreen" style="flex:1;display:none;align-items:flex-start;justify-content:center;padding:32px">
+    <div id="errorCard" style="width:100%;max-width:360px;background:#ffffff;border:1px solid #efedf1;border-radius:12px;padding:28px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center"></div>
+  </div>
+
+  <footer id="pickFooter" style="padding:14px 32px 28px;text-align:center">
+    <span style="font-size:12px;color:#747686">Everything runs on your own computer.</span>
+  </footer>
+</div>
+<script src="./node_modules/jsplumb/dist/js/jsplumb.min.js"></script>
+<script src="./node_modules/lucide/dist/umd/lucide.min.js"></script>
+<script src="./history-ui.js"></script>
+<script src="./dashboard.js"></script>
+</body>
+</html>
