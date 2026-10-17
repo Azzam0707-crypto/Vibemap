@@ -25,6 +25,7 @@ No vendor lock-in: bring your own AI provider (endpoint + API key), and VibeMap 
 
 ## Table of Contents
 
+- [Download](#download)
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -34,6 +35,15 @@ No vendor lock-in: bring your own AI provider (endpoint + API key), and VibeMap 
 - [Contributing](#contributing)
 - [Built With](#built-with)
 - [License](#license)
+
+## Download
+
+Grab the latest Windows build from [Releases](https://github.com/Azzam0707-crypto/Vibemap/releases):
+
+- **VibeMap Setup x.x.x.exe** — installer (recommended)
+- **VibeMap x.x.x.exe** — portable, no install needed
+
+Or build from source below.
 
 ## Features
 
